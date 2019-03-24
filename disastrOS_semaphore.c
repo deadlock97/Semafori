@@ -38,6 +38,7 @@ int Semaphore_free(Semaphore* r) {
   return PoolAllocator_releaseBlock(&_semaphores_allocator, r);
 }
 
+//restituisce il semaforo con sem_id = id 
 Semaphore* SemaphoreList_byId(SemaphoreList* l, int id) {
   ListItem* aux=l->first;
   while(aux){
