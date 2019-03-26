@@ -7,14 +7,43 @@
 #include "disastrOS_semdescriptor.h"
 
 void internal_semOpen(){
-	int id = running->syscall_args[0];	
-	int count = running->syscall_args[1];
+	int sem_id = running->syscall_args[0];	
 	
-	//controllo se l'id del semaforo esiste gia
-	if(SemaphoreList_byId(semaphores_list,id) != 0)
-		running->syscall_retvalue = -1;
-	Semaphore* s = Semaphore_alloc(id,count);
-	if(!s)
-		running->syscall_retvalue;
-	SemDescriptor_alloc(1,s,running);
+	if(sem_id < 0){
+		disastrOS_debug("Errore: id del semaforo <0 \n");
+		running->syscall_retvalue = SEM_ERROR;
+		return;
+	}
+	
+	int count = running->syscall_args[1];
+	Semaphore* s;
+	
+	//controllo se il semaforo esiste gia
+	
+	s = SemaphoreList_byId(&semaphores_list,sem_id);
+	
+	
+	if(!s){
+		s = Semaphore_alloc(sem_id,count);
+		if(!s){
+			disastrOS_debug("Errore nell'allocazione del semaforo\n");
+			running->syscall_retvalue = SEM_ERROR;
+			return;
+		}
+	}
+	SemDescriptor* sd = SemDescriptor_alloc(running->last_sem_fd,s,running);
+	if(!sd){
+		disastrOS_debug("Errore nell'allocazione del descrittore del semaforo\n");
+		running->syscall_retvalue = SEM_ERROR;
+		return;
+	}
+	running->last_sem_fd++;
+	
+	SemDescriptorPtr* sdptr = SemDescriptorPtr_alloc(sd);
+	List_insert(&running->sem_descriptors,running->sem_descriptors.last,(ListItem*)sd);
+	
+	sd->ptr =sdptr;
+	
+	//restituisco l'id del semaforo
+	running->syscall_retvalue = s->id;
 }
