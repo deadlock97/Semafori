@@ -26,8 +26,8 @@ void internal_semWait(){
 	SemDescriptor* sd = SemDescriptorList_byFd(&running->sem_descriptors,sem_id);
 	SemDescriptorPtr* ptr = sd->ptr;
 	
-	//rimuovo ptr dalla lista dei descrittori di s
-	List_detach(&s->descriptors,(ListItem*)ptr);
+	//rimuovo ptr dalla lista dei descrittori di s (necessario?)
+	//List_detach(&s->descriptors,(ListItem*)ptr);
 	
 	//metto il descrittore nella lista dei waiting
 	List_insert(&s->waiting_descriptors,s->waiting_descriptors.last,(ListItem*)ptr);
@@ -42,8 +42,13 @@ void internal_semWait(){
 	List_insert(&waiting_list,waiting_list.last,(ListItem*)running);
 	
 	
+	running->syscall_retvalue = 0;
+	
+	
 	
   }
+  
+ 
   
   
   
