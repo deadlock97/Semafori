@@ -42,6 +42,9 @@ void internal_semOpen(){
 	SemDescriptorPtr* sdptr = SemDescriptorPtr_alloc(sd);
 	List_insert(&running->sem_descriptors,running->sem_descriptors.last,(ListItem*)sd);
 	
+	//aggiungo all lista dei descrittori del semaforo questo processo
+	List_insert(&s->descriptors,s->descriptors.last,(ListItem*)sd);
+	
 	sd->ptr =sdptr;
 	
 	//restituisco l'id del semaforo

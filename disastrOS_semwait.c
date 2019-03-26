@@ -23,15 +23,23 @@ void internal_semWait(){
   }
   else{
 	 
-	SemDescriptor* sd = SemDescriptorList_byFd(&running->sem_descriptors,sem_fd);
+	SemDescriptor* sd = SemDescriptorList_byFd(&running->sem_descriptors,sem_id);
 	SemDescriptorPtr* ptr = sd->ptr;
 	
 	//rimuovo ptr dalla lista dei descrittori di s
-	List_detach(&s->sem_descriptors,ptr);
+	List_detach(&s->descriptors,(ListItem*)ptr);
 	
 	//metto il descrittore nella lista dei waiting
 	List_insert(&s->waiting_descriptors,s->waiting_descriptors.last,(ListItem*)ptr);
 	
+	//metto il processo in waiting
+	running->status = Waiting;
+	
+	//levo il processo dalla lista dei ready
+	List_detach(&ready_list,(ListItem*)running);
+	
+	//metto il processo dalla lista dei waiting
+	List_insert(&waiting_list,waiting_list.last,(ListItem*)running);
 	
 	
 	
