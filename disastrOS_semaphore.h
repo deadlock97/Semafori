@@ -2,6 +2,8 @@
 #include "linked_list.h"
 #include "disastrOS_pcb.h"
 
+//Errore per semaforo gia esistente
+#define SEM_ERROR -1
 
 typedef struct {
   ListItem list;
