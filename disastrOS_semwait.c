@@ -9,21 +9,34 @@
 void internal_semWait(){
   // do stuff :)
   
-  int sem_id = running->syscall_args[0];
+  //prendo l'fd come argomento
+  int sem_fd = running->syscall_args[0];
   
-  Semaphore* s = SemaphoreList_byId(&semaphores_list,sem_id);
-  if(sem_id < 0  || !s){
+  //cerco il semdesescriptor tramite il suo fd
+  SemDescriptor* sd = SemDescriptorList_byFd(&running->sem_descriptors,sem_fd);
+  if(!sd){
 	disastrOS_debug("semaforo non esistente \n");
 	running->syscall_retvalue =  SEM_ERROR;
 	return;
   }
+  
+  //prendo il semaforo dal semdescriptor
+  Semaphore* s = sd->semaphore;
+  if(!s){
+	disastrOS_debug("semaforo non esistente \n");
+	running->syscall_retvalue =  SEM_ERROR;
+	return;
+  }
+  
+  //verifico che il contatore sia > 0: se si, decremento il contatore, altrimenti inserisco il processo nella lista di attesa
+  
   if(s->count > 0){
 	s->count--;
 	return;
   }
   else{
 	 
-	SemDescriptor* sd = SemDescriptorList_byFd(&running->sem_descriptors,sem_id);
+	
 	SemDescriptorPtr* ptr = sd->ptr;
 	
 	//rimuovo ptr dalla lista dei descrittori di s (necessario?)
