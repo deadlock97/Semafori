@@ -21,6 +21,10 @@ void childFunction(void* args){
   int fd=disastrOS_openResource(disastrOS_getpid(),type,mode);
   printf("fd=%d\n", fd);
   printf("PID: %d, terminating\n", disastrOS_getpid());
+  
+  printf("provo a chiudere un descrittore di un semaforo mai aperto:\n");
+  int tmp_close = disastrOS_semClose(MAX_NUM_SEMDESCRIPTORS_PER_PROCESS);
+printf("deve dare errore poichè questo fd non esiste per questo processo-> %d\n",tmp_close);
 
   for (int i=0; i<(disastrOS_getpid()+1); ++i){
     printf("PID: %d, iterate %d\n", disastrOS_getpid(), i);
@@ -76,3 +80,4 @@ int main(int argc, char** argv){
   disastrOS_start(initFunction, 0, logfilename);
   return 0;
 }
+

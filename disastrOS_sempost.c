@@ -27,6 +27,11 @@ void internal_semPost(){
 		SemDescriptorPtr* towakeptr = (SemDescriptorPtr*)List_detach(&s->waiting_descriptors,s->waiting_descriptors.first);
 		SemDescriptor* sdtowake = towakeptr->descriptor;
 		
+		if(!(List_detach(&waiting_list,(ListItem*)sdtowake->pcb))){
+			disastrOS_debug("errore nella rimozione del pcb dalla waiting list");
+			running->syscall_retvalue = SEM_ERROR;
+			return;
+		}
 		sdtowake->pcb->status=Ready;
 		List_insert(&ready_list,ready_list.last,(ListItem*)(sdtowake->pcb));
 		if(!(s->waiting_descriptors.first))

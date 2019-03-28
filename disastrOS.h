@@ -38,3 +38,10 @@ int disastrOS_destroyResource(int resource_id);
 
 // debug function, prints the state of the internal system
 void disastrOS_printStatus();
+
+
+// da mettere??
+int disastrOS_semOpen(int sem_id,int count);
+int disastrOS_semClose(int sem_id);
+int disastrOS_semWait(int sem_fd);
+int disastrOS_semPost(int sem_fd);

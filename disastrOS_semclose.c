@@ -13,6 +13,7 @@ void internal_semClose(){
   
   SemDescriptor* sd = SemDescriptorList_byFd(&running->sem_descriptors,sem_fd);
   if(!sd){
+	disastrOS_debug("semdescriptor non trovato, errore\n");
 	running->syscall_retvalue = SEM_ERROR;
 	return;
   }
