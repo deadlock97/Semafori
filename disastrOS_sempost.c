@@ -9,19 +9,28 @@
 void internal_semPost(){
   
 	//prendo l'id del semaforo
-	int sem_id = running->syscall_args[0];
-	Semaphore* s = SemaphoreList_byId(&semaphores_list,sem_id);
+	int sem_fd = running->syscall_args[0];
+	SemDescriptor* sd = SemDescriptorList_byFd(&semaphores_list,sem_fd);
 	
-	if(sem_id < 0  || !s){
+	Semaphore* s = sd->semaphore;
+	
+	if(!s){
 		disastrOS_debug("semaforo non esistente \n");
 		running->syscall_retvalue =  SEM_ERROR;
 		return;
 	}
 	
-	if(s->count < 0){
-		SemDescriptor* sd = SemDescriptorList_byFd(&running->sem_descriptors,sem_id);
+	if(s->count > 0){
+		s->count++;
 	}
 	else{
-		s->count++;
+		SemDescriptorPtr* towakeptr = (SemDescriptorPtr*)List_detach(&s->waiting_descriptors,s->waiting_descriptors.first);
+		SemDescriptor* sdtowake = towakeptr->descriptor;
+		
+		sdtowake->pcb->status=Ready;
+		List_insert(&ready_list,ready_list.last,(ListItem*)(sdtowake->pcb));
+		if(!(s->waiting_descriptors.first))
+			s->count++;
+		
 	}
 }
