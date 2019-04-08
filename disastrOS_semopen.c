@@ -18,10 +18,14 @@ void internal_semOpen(){
 	int count = running->syscall_args[1];
 	Semaphore* s;
 	
+	//printf("id = %d\n",sem_id);
+	//printf("count = %d\n",count);
+	
+	
 	//controllo se il semaforo esiste gia
-	
+	printf("s : %p\n",s);
 	s = SemaphoreList_byId(&semaphores_list,sem_id);
-	
+	printf("s : %p\n",s);
 	
 	if(!s){
 		s = Semaphore_alloc(sem_id,count);
@@ -30,23 +34,28 @@ void internal_semOpen(){
 			running->syscall_retvalue = SEM_ERROR;
 			return;
 		}
+		List_insert(&semaphores_list,semaphores_list.last,(ListItem*)s);
 	}
+	
 	SemDescriptor* sd = SemDescriptor_alloc(running->last_sem_fd,s,running);
 	if(!sd){
 		disastrOS_debug("Errore nell'allocazione del descrittore del semaforo\n");
 		running->syscall_retvalue = SEM_ERROR;
 		return;
 	}
+	
+	List_insert(&running->sem_descriptors,running->sem_descriptors.last,(ListItem*)sd);
 	running->last_sem_fd++;
 	
 	SemDescriptorPtr* sdptr = SemDescriptorPtr_alloc(sd);
-	List_insert(&running->sem_descriptors,running->sem_descriptors.last,(ListItem*)sd);
 	
-	//aggiungo all lista dei descrittori del semaforo questo processo
-	List_insert(&s->descriptors,s->descriptors.last,(ListItem*)sd);
+	//aggiungo all lista dei descrittori del semaforo sdptr
+	List_insert(&s->descriptors,s->descriptors.last,(ListItem*)sdptr);
+	
 	
 	sd->ptr =sdptr;
 	
 	//restituisco l'id del semaforo
-	running->syscall_retvalue = s->id;
+	
+	running->syscall_retvalue = sd->fd;
 }

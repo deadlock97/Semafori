@@ -10,7 +10,7 @@ void internal_semPost(){
   
 	//prendo l'id del semaforo
 	int sem_fd = running->syscall_args[0];
-	SemDescriptor* sd = SemDescriptorList_byFd(&semaphores_list,sem_fd);
+	SemDescriptor* sd = SemDescriptorList_byFd(&running->sem_descriptors,sem_fd);
 	
 	Semaphore* s = sd->semaphore;
 	
@@ -20,22 +20,20 @@ void internal_semPost(){
 		return;
 	}
 	
-	if(s->count > 0){
+	
 		s->count++;
-	}
-	else{
-		SemDescriptorPtr* towakeptr = (SemDescriptorPtr*)List_detach(&s->waiting_descriptors,s->waiting_descriptors.first);
-		SemDescriptor* sdtowake = towakeptr->descriptor;
+	
+	if(s->count <= 0){
+		//2
+		SemDescriptorPtr* sdtowakeptr = (SemDescriptorPtr*)List_detach(&s->waiting_descriptors,s->waiting_descriptors.first);
+		SemDescriptor* sdtowake = sdtowakeptr->descriptor;
 		
-		if(!(List_detach(&waiting_list,(ListItem*)sdtowake->pcb))){
-			disastrOS_debug("errore nella rimozione del pcb dalla waiting list");
-			running->syscall_retvalue = SEM_ERROR;
-			return;
-		}
-		sdtowake->pcb->status=Ready;
-		List_insert(&ready_list,ready_list.last,(ListItem*)(sdtowake->pcb));
-		if(!(s->waiting_descriptors.first))
-			s->count++;
+		List_detach(&waiting_list,(ListItem*)sdtowake->pcb);
+		List_insert(&s->descriptors, s->descriptors.last, (ListItem*) sdtowakeptr);
+		running->status=Ready;
+		running = sdtowake->pcb;
+		List_insert(&ready_list,ready_list.last,(ListItem*)running); //1
+		
 		
 	}
 }

@@ -29,12 +29,10 @@ void internal_semWait(){
   }
   
   //verifico che il contatore sia > 0: se si, decremento il contatore, altrimenti inserisco il processo nella lista di attesa
-  
-  if(s->count > 0){
-	s->count--;
-	return;
-  }
-  else{
+  printf("s->count = %d\n",s->count);
+  s->count--;
+	
+  if(s->count < 0){
 	 
 	
 	SemDescriptorPtr* ptr = sd->ptr;
@@ -49,20 +47,16 @@ void internal_semWait(){
 	running->status = Waiting;
 	
 	//levo il processo dalla lista dei ready
-	List_detach(&ready_list,(ListItem*)running);
+	//List_detach(&ready_list,(ListItem*)running);
 	
 	//metto il processo dalla lista dei waiting
 	List_insert(&waiting_list,waiting_list.last,(ListItem*)running);
 	
-	
+	PCB* p= (PCB*)List_detach(&ready_list,ready_list.first);
+	running = p;
 	running->syscall_retvalue = 0;
 	
 	
 	
   }
-  
- 
-  
-  
-  
 }

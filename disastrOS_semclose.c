@@ -20,15 +20,21 @@ void internal_semClose(){
   
   //rimuovo il descritto dalla lista dei processi
   sd = (SemDescriptor*)List_detach(&running->sem_descriptors,(ListItem*)sd);
-  assert(sd);
+  
   
   Semaphore* s = sd->semaphore;
   
   //rimuovo il puntatore del sem descriptor dalla lista dei semafori
   SemDescriptorPtr* sdptr = (SemDescriptorPtr*)List_detach(&s->descriptors,(ListItem*)(sd->ptr));
-  assert(sdptr);
-  Semaphore_free(s);
+  
+  SemDescriptor_free(sd);
   SemDescriptorPtr_free(sdptr);
+  
+  if(s->descriptors.size == 0){
+	s = (Semaphore*) List_detach(&semaphores_list, (ListItem*) s);
+    Semaphore_free(s);
+  }
+  
   running->syscall_retvalue = 0;
   
 	
