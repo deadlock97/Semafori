@@ -28,38 +28,38 @@ void childFunction(void* args){
   int ris;
   int fdc;
   //test open
-  printf("apro un semaforo con id negativo\n");
-  fdc = disastrOS_semOpen(-3,2);
-  printf("deve essere sbagliato-> %d\n",fdc);
-  
-  
-  printf("apro un Semaforo:\n");
-  fdc = disastrOS_semOpen(1,3);
-  printf("deve essere corretto-> %d\n",fdc);
-  
-  disastrOS_printStatus();
-  
-  
-  
-  
-  
-  
-  
-  //test close
-  printf("chiudo il semaforo:\n");
-  ris = disastrOS_semClose(fdc);
-  printf("deve essere corretto-> %d\n",ris);
-  
-  printf("chiudo un semaforo non aperto\n");
-  ris = disastrOS_semClose(fdc);
-  printf("deve essere sbagliato-> %d\n",ris);
-  
-  disastrOS_printStatus();
-  
-  //test wait
+  if (disastrOS_getpid() == 2 ){
+	  printf("apro un semaforo con id negativo\n");
+	  fdc = disastrOS_semOpen(-3,2);
+	  printf("deve essere sbagliato-> %d\n",fdc);
+	  
+	  
+	  printf("apro un Semaforo:\n");
+	  fdc = disastrOS_semOpen(1,3);
+	  printf("deve essere corretto-> %d\n",fdc);
+	  
+	  disastrOS_printStatus();
+	  
+	  
+	  
+	  
+	  
+	  
+	  
+	  //test close
+	  printf("chiudo il semaforo:\n");
+	  ris = disastrOS_semClose(fdc);
+	  printf("deve essere corretto-> %d\n",ris);
+	  
+	  printf("chiudo un semaforo non aperto\n");
+	  ris = disastrOS_semClose(fdc);
+	  printf("deve essere sbagliato-> %d\n",ris);
+	  
+	  disastrOS_printStatus();
+  }
+  //test wait && post
   printf("apro un Semaforo:\n");
   ris = disastrOS_semOpen(0,1);
-  printf("ris: %d\n",ris);
   printf("deve essere corretto-> %d\n",ris);
   fdc = ris;
   
@@ -68,9 +68,6 @@ void childFunction(void* args){
   ris = disastrOS_semWait(fdc);
   }
 
-  
-  
-  //semPost
   if(disastrOS_getpid() >=6){
    printf("faccio una sempost sul semaforo\n");
 	ris = disastrOS_semPost(fdc);

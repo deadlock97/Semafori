@@ -28,8 +28,7 @@ void internal_semWait(){
 	return;
   }
   
-  //verifico che il contatore sia > 0: se si, decremento il contatore, altrimenti inserisco il processo nella lista di attesa
-  printf("s->count = %d\n",s->count);
+
   s->count--;
 	
   if(s->count < 0){
@@ -40,8 +39,6 @@ void internal_semWait(){
         running->syscall_retvalue = -1;
         return;
 	}
-	//rimuovo ptr dalla lista dei descrittori di s
-	List_detach(&s->descriptors,(ListItem*)ptr);
 	
 	//metto il descrittore nella lista dei waiting
 	List_insert(&s->waiting_descriptors,s->waiting_descriptors.last,(ListItem*)ptr);

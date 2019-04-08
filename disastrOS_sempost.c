@@ -34,8 +34,7 @@ void internal_semPost(){
 
 		//tolgo il processo (relativo al semdescriptor da svegliare) dalla lista dei processi in attesa
 		List_detach(&waiting_list,(ListItem*)sdtowake->pcb);
-		//inserisco il puntatore al descrittore del processo svegliato nella lista dei descrittori del semaforo
-		List_insert(&s->descriptors, s->descriptors.last, (ListItem*) sdtowakeptr);
+		
 		
 		//cambio il processo da mettere in running
 		running->status=Ready;
