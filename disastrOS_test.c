@@ -1,3 +1,4 @@
+
 #include <stdio.h>
 #include <unistd.h>
 #include <poll.h>
@@ -25,51 +26,60 @@ void childFunction(void* args){
   
   // test semafori
   int ris;
-  
+  int fdc;
   //test open
   printf("apro un semaforo con id negativo\n");
-  ris = disastrOS_semOpen(-3,2);
-  printf("deve essere sbagliato-> %d\n",ris);
+  fdc = disastrOS_semOpen(-3,2);
+  printf("deve essere sbagliato-> %d\n",fdc);
+  
   
   printf("apro un Semaforo:\n");
-  ris = disastrOS_semOpen(1,3);
-  printf("deve essere corretto-> %d\n",ris);
+  fdc = disastrOS_semOpen(1,3);
+  printf("deve essere corretto-> %d\n",fdc);
   
   disastrOS_printStatus();
+  
+  
+  
+  
+  
+  
+  
   //test close
-  printf("chiudo il semaforo appena aperto:\n");
-  ris = disastrOS_semClose(0);
+  printf("chiudo il semaforo:\n");
+  ris = disastrOS_semClose(fdc);
   printf("deve essere corretto-> %d\n",ris);
   
   printf("chiudo un semaforo non aperto\n");
-  ris = disastrOS_semClose(5);
+  ris = disastrOS_semClose(fdc);
   printf("deve essere sbagliato-> %d\n",ris);
   
   disastrOS_printStatus();
   
   //test wait
   printf("apro un Semaforo:\n");
-  ris = disastrOS_semOpen(7,1);
+  ris = disastrOS_semOpen(0,1);
   printf("ris: %d\n",ris);
   printf("deve essere corretto-> %d\n",ris);
-  int fdc = ris;
-  printf("faccio una semwait su il semaforo appena creato\n");
+  fdc = ris;
+  
+  if (disastrOS_getpid() <6 ){
+  printf("faccio una semwait sul semaforo, pid = %d\n",disastrOS_getpid());
   ris = disastrOS_semWait(fdc);
-  printf("deve essere corretto-> %d\n",ris);
-  printf("faccio una semwait su il semaforo appena creato\n");
-  ris = disastrOS_semWait(fdc);
-  printf("deve essere corretto-> %d\n",ris);
-  //contatore <0
-  printf("faccio una semwait su il semaforo appena creato\n");
-  ris = disastrOS_semWait(fdc);
-  printf("deve essere corretto-> %d\n",ris);
-  disastrOS_printStatus();
+  }
+
+  
   
   //semPost
-   printf("faccio una sempost su il semaforo appena creato\n");
-  ris = disastrOS_semPost(ris);
+  if(disastrOS_getpid() >=6){
+   printf("faccio una sempost sul semaforo\n");
+	ris = disastrOS_semPost(fdc);
+  }
+  
+  //chiudo il semaforo
+  printf("chiudo il semaforo:\n");
+  ris = disastrOS_semClose(fdc);
   printf("deve essere corretto-> %d\n",ris);
-  disastrOS_printStatus();
   
   for (int i=0; i<(disastrOS_getpid()+1); ++i){
     printf("PID: %d, iterate %d\n", disastrOS_getpid(), i);

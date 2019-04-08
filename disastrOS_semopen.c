@@ -23,9 +23,7 @@ void internal_semOpen(){
 	
 	
 	//controllo se il semaforo esiste gia
-	printf("s : %p\n",s);
 	s = SemaphoreList_byId(&semaphores_list,sem_id);
-	printf("s : %p\n",s);
 	
 	if(!s){
 		s = Semaphore_alloc(sem_id,count);

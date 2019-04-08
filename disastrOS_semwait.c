@@ -36,9 +36,12 @@ void internal_semWait(){
 	 
 	
 	SemDescriptorPtr* ptr = sd->ptr;
-	
-	//rimuovo ptr dalla lista dei descrittori di s (necessario?)
-	//List_detach(&s->descriptors,(ListItem*)ptr);
+	if (!ptr) {
+        running->syscall_retvalue = -1;
+        return;
+	}
+	//rimuovo ptr dalla lista dei descrittori di s
+	List_detach(&s->descriptors,(ListItem*)ptr);
 	
 	//metto il descrittore nella lista dei waiting
 	List_insert(&s->waiting_descriptors,s->waiting_descriptors.last,(ListItem*)ptr);
@@ -54,9 +57,9 @@ void internal_semWait(){
 	
 	PCB* p= (PCB*)List_detach(&ready_list,ready_list.first);
 	running = p;
-	running->syscall_retvalue = 0;
-	
+
 	
 	
   }
+  running->syscall_retvalue = 0;
 }
