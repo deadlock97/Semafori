@@ -60,6 +60,7 @@ void childFunction(void* args){
   //test wait && post
   printf("apro un Semaforo:\n");
   ris = disastrOS_semOpen(0,1);
+  
   printf("deve essere corretto-> %d\n",ris);
   fdc = ris;
   
@@ -76,8 +77,7 @@ void childFunction(void* args){
   
   //chiudo il semaforo
   printf("chiudo il semaforo:\n");
-  if(disastrOS_getpid() == 11)
-	ris = disastrOS_semClose(fdc);
+  ris = disastrOS_semClose(fdc);
   printf("deve essere corretto-> %d\n",ris);
   
   for (int i=0; i<(disastrOS_getpid()+1); ++i){
