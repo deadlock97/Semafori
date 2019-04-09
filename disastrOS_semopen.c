@@ -46,12 +46,17 @@ void internal_semOpen(){
 	running->last_sem_fd++;
 	
 	SemDescriptorPtr* sdptr = SemDescriptorPtr_alloc(sd);
+	if(!sdptr){
+		disastrOS_debug("Errore nell'allocazione del puntatore al descrittore del semaforo\n");
+		running->syscall_retvalue = SEM_ERROR;
+		return;
+	}
+
+	sd->ptr =sdptr;
 	
 	//aggiungo all lista dei descrittori del semaforo sdptr
 	List_insert(&s->descriptors,s->descriptors.last,(ListItem*)sdptr);
 	
-	
-	sd->ptr =sdptr;
 	
 	//restituisco l'id del semaforo
 	
