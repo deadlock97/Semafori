@@ -12,7 +12,11 @@ void internal_semPost(){
 	//prendo l'id del semaforo
 	int sem_fd = running->syscall_args[0];
 	SemDescriptor* sd = SemDescriptorList_byFd(&running->sem_descriptors,sem_fd);
-	
+	if(!sd){
+		disastrOS_debug("descrittore del semaforo non esistente \n");
+		running->syscall_retvalue =  SEM_ERROR;
+		return;
+	}
 	Semaphore* s = sd->semaphore;
 	
 	

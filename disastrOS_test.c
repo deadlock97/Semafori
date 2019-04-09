@@ -63,6 +63,7 @@ void childFunction(void* args){
   printf("deve essere corretto-> %d\n",ris);
   fdc = ris;
   
+  
   if (disastrOS_getpid() <6 ){
   printf("faccio una semwait sul semaforo, pid = %d\n",disastrOS_getpid());
   ris = disastrOS_semWait(fdc);
