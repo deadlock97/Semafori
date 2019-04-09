@@ -30,12 +30,12 @@ void internal_semPost(){
 	s->count++;
 
 	if(s->count <= 0){
-
+		
 		// prendo il sem_descriptorptr del primo elemento nella lista dei descrittori in attesa del semaforo dato
 		SemDescriptorPtr* sdtowakeptr = (SemDescriptorPtr*)List_detach(&s->waiting_descriptors,s->waiting_descriptors.first);
 		
 		SemDescriptor* sdtowake = sdtowakeptr->descriptor;
-
+		List_insert(&s->descriptors, s->descriptors.last, (ListItem*) sdtowakeptr);
 		//tolgo il processo (relativo al semdescriptor da svegliare) dalla lista dei processi in attesa
 		List_detach(&waiting_list,(ListItem*)sdtowake->pcb);
 		
@@ -48,5 +48,6 @@ void internal_semPost(){
 		
 		
 	}
+	disastrOS_printStatus();
 	running->syscall_retvalue = 0;
 }

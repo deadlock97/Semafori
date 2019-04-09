@@ -32,7 +32,7 @@ void internal_semWait(){
   s->count--;
 	
   if(s->count < 0){
-	 
+	  List_detach(&s->descriptors, (ListItem*) sd->ptr);
 	
 	SemDescriptorPtr* ptr = sd->ptr;
 	if (!ptr) {
@@ -58,5 +58,6 @@ void internal_semWait(){
 	
 	
   }
+  disastrOS_printStatus();
   running->syscall_retvalue = 0;
 }
