@@ -18,13 +18,13 @@ void internal_semClose(){
 	return;
   }
   
-  //rimuovo il descritto dalla lista dei processi
+  //rimuovo il descrittore dalla lista dei sem descriptor del processo in esecuzione
   sd = (SemDescriptor*)List_detach(&running->sem_descriptors,(ListItem*)sd);
   
   
   Semaphore* s = sd->semaphore;
   
-  //rimuovo il puntatore del sem descriptor dalla lista dei semafori
+  //rimuovo il puntatore del sem descriptor dalla lista del semafori
   SemDescriptorPtr* sdptr = (SemDescriptorPtr*)List_detach(&s->descriptors,(ListItem*)(sd->ptr));
   
   SemDescriptor_free(sd);

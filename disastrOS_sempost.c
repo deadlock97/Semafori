@@ -44,6 +44,7 @@ void internal_semPost(){
 		running->status=Ready;
 		List_insert(&ready_list,ready_list.last,(ListItem*)running); 
 		running = sdtowake->pcb;
+		running->status = Running;
 		
 		
 		

@@ -30,15 +30,17 @@ void internal_semWait(){
   
 
   s->count--;
+
+  SemDescriptorPtr* ptr = sd->ptr;
+  if (!ptr) {
+     running->syscall_retvalue = -1;
+     return;
+  }
+	
 	
   if(s->count < 0){
-	  List_detach(&s->descriptors, (ListItem*) sd->ptr);
+	  List_detach(&s->descriptors, (ListItem*) ptr);
 	
-	SemDescriptorPtr* ptr = sd->ptr;
-	if (!ptr) {
-        running->syscall_retvalue = -1;
-        return;
-	}
 	
 	//metto il descrittore nella lista dei waiting
 	List_insert(&s->waiting_descriptors,s->waiting_descriptors.last,(ListItem*)ptr);
@@ -54,6 +56,7 @@ void internal_semWait(){
 	
 	PCB* p= (PCB*)List_detach(&ready_list,ready_list.first);
 	running = p;
+	running->status = Running;
 
 	
 	

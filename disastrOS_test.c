@@ -75,11 +75,11 @@ void childFunction(void* args){
 	ris = disastrOS_semPost(fdc);
   }
   
-  //chiudo il semaforo
+  /*//chiudo il semaforo
   printf("chiudo il semaforo:\n");
   ris = disastrOS_semClose(fdc);
   printf("deve essere corretto-> %d\n",ris);
-  
+  */
   for (int i=0; i<(disastrOS_getpid()+1); ++i){
     printf("PID: %d, iterate %d\n", disastrOS_getpid(), i);
     disastrOS_sleep((20-disastrOS_getpid())*5);
